@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Temperature Estimator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      max-width: 600px;
+      margin: auto;
+    }
+    input, button {
+      margin: 0.5em 0;
+      padding: 0.5em;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h2>Sky Temperature Estimator</h2>
+  <p><strong>Note:</strong> Temperatures are estimated based on the Remazeilles 2014 Haslam map and are scaled to the desired frequency.</p>
+
+  <label for="ra">RA (deg):</label>
+  <input type="number" id="ra" value="180">
+
+  <label for="dec">Dec (deg):</label>
+  <input type="number" id="dec" value="45">
+
+  <label for="freq">Frequency (MHz):</label>
+  <input type="number" id="freq" value="1420">
+
+  <button onclick="estimateTemp()">Estimate Temperature</button>
+
+  <h3 id="result"></h3>
+
+  <script>
+    let skyTempData = {};
+
+    // Load the JSON data (replace this URL with the actual path to your JSON file)
+    fetch('haslam_0.5deg_lookup.json') // Replace with the actual URL
+      .then(response => response.json())
+      .then(data => {
+        skyTempData = data;
+      })
+      .catch(error => {
+        console.error('Error loading JSON:', error);
+      });
+
+    function estimateTemp() {
+      const ra = parseFloat(document.getElementById('ra').value);
+      const dec = parseFloat(document.getElementById('dec').value);
+      const freq = parseFloat(document.getElementById('freq').value);
+
+      // Format the RA and Dec as strings to use as keys in the JSON lookup table
+      const key = `${ra.toFixed(1)},${dec.toFixed(1)}`;
+
+      if (skyTempData[key]) {
+        const temp408 = skyTempData[key];  // Get the temperature at 408 MHz
+        const beta = 2.7;  // Synchrotron index
+
+        // Estimate the temperature at the desired frequency
+        const temp = temp408 * Math.pow(freq / 408.0, -beta);
+
+        document.getElementById('result').innerText = `Estimated sky temperature at ${freq} MHz: ${temp.toFixed(2)} K`;
+      } else {
+        document.getElementById('result').innerText = 'Temperature data not available for the given RA/Dec.';
+      }
+    }
+  </script>
+</body>
+</html>
+
