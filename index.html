@@ -20,13 +20,13 @@
 </head>
 <body>
   <h2>Sky Temperature Estimator</h2>
-  <p><strong>Note:</strong> Temperatures are estimated based on the Remazeilles 2014 Haslam map and are scaled to the desired frequency.</p>
+  <p><strong>Note:</strong> Temperatures are estimated based on the <a href=https://www.jb.man.ac.uk/research/cosmos/haslam_map/>Remazeilles 2014 Haslam map</a> and are scaled to the desired frequency.</p>
 
-  <label for="ra">RA (deg):</label>
-  <input type="number" id="ra" value="180">
+  <label for="gl">Galactic l (deg):</label>
+  <input type="number" id="gl" value="180">
 
-  <label for="dec">Dec (deg):</label>
-  <input type="number" id="dec" value="45">
+  <label for="gb">Galactic b (deg):</label>
+  <input type="number" id="gb" value="45">
 
   <label for="freq">Frequency (MHz):</label>
   <input type="number" id="freq" value="1420">
@@ -49,12 +49,12 @@
       });
 
     function estimateTemp() {
-      const ra = parseFloat(document.getElementById('ra').value);
-      const dec = parseFloat(document.getElementById('dec').value);
+      const gl = parseFloat(document.getElementById('gl').value);
+      const gb = parseFloat(document.getElementById('gb').value);
       const freq = parseFloat(document.getElementById('freq').value);
 
       // Format the RA and Dec as strings to use as keys in the JSON lookup table
-      const key = `${ra.toFixed(1)},${dec.toFixed(1)}`;
+      const key = `${gl.toFixed(1)},${gb.toFixed(1)}`;
 
       if (skyTempData[key]) {
         const temp408 = skyTempData[key];  // Get the temperature at 408 MHz
@@ -65,7 +65,7 @@
 
         document.getElementById('result').innerText = `Estimated sky temperature at ${freq} MHz: ${temp.toFixed(2)} K`;
       } else {
-        document.getElementById('result').innerText = 'Temperature data not available for the given RA/Dec.';
+        document.getElementById('result').innerText = 'Temperature data not available for the given sky position.';
       }
     }
   </script>
